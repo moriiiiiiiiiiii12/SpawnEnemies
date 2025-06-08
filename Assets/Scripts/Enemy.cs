@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
-
-    private Vector3 _direction;
+    [SerializeField] private float _speed = 10f;
+    [SerializeField] private Transform _target;
 
     private void Awake()
     {
@@ -16,16 +15,19 @@ public class Enemy : MonoBehaviour
         Move();
     }
 
-    public void Init(Transform transform, Vector3 direction)
+    public void Init(Vector3 position, Transform direction)
     {
-        this.transform.position = transform.position;
-        _direction = direction.normalized;
+        transform.position = position;
+
+        _target = direction;
 
         gameObject.SetActive(true);
     }
 
     public void Move()
     {
-        transform.Translate(_direction * speed * Time.deltaTime);
+        Vector3 direction = (_target.position - transform.position).normalized;
+
+        transform.Translate(direction * _speed * Time.deltaTime);
     }
 }

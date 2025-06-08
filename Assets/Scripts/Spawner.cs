@@ -3,38 +3,29 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Enemy _prefabEnemy;
     [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private SpawnPointData[] _spawnPoints;
 
     private void Start() => StartCoroutine(Spawn());
 
     private IEnumerator Spawn()
     {
         bool isSpawn = true;
+        int minNumSpawnPoint = 0;
+        int maxNumSpawnPoint = _spawnPoints.Length;
 
         while (isSpawn)
         {
-            int randomNumSpawnPoint = Random.Range(0, _spawnPoints.Length);
-            Transform randomSpawnPoint = _spawnPoints[randomNumSpawnPoint];
+            int randomNumSpawnPoint = Random.Range(minNumSpawnPoint, maxNumSpawnPoint);
 
-            Enemy newEnemy = Instantiate(_prefabEnemy);
+            Vector3 spawnPoint = _spawnPoints[randomNumSpawnPoint].SpawnPoint;
+            Transform target = _spawnPoints[randomNumSpawnPoint].Target;
+            Enemy enemy = _spawnPoints[randomNumSpawnPoint].PrefabEnemy;
 
-            newEnemy.Init(randomSpawnPoint, GetRandomDirection());
+            Enemy newEnemy = Instantiate(enemy);
+            newEnemy.Init(spawnPoint, target);
 
             yield return new WaitForSeconds(_spawnInterval);
         }
-    }
-
-    private Vector3 GetRandomDirection()
-    {
-        float minValue = -1f;
-        float maxValue = 1f;
-
-        float randomX = Random.Range(minValue, maxValue);
-        float randomZ = Random.Range(minValue, maxValue);
-        float y = 0f;
-
-        return new Vector3(randomX, y, randomZ);
     }
 }
